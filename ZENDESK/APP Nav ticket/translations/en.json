@@ -1,0 +1,18 @@
+{
+  "app": {
+    "description": "Demo Ticket Sidebar app.",
+    "name": "Basic Ticket Sample App",
+    "parameters": {
+      "UrlApiRest" : { "label": "Url api rest", "helpText": "Enter the Url of your api rest" },
+      "ticket_formato" : { "label": "How to use the default zendesk ticket?", "helpText": "Select if you want to get the Zendesk ticket in its original format, if you select this option do not complete the other fields below" },
+      "ticket_id"     : { "label": " Relational field Ticket ID", "helpText": "Leave blank if you do not have" },
+      "ticket_description"    : { "label": "Relational Field Ticket Description", "helpText": "Leave blank if you do not have" },
+      "ticket_status"    : { "label": "Relacional field Ticket  Status", "helpText": "Leave blank if you do not have" },
+      "UrlPaguina"    : { "label": "Url to show" },
+      "UrlInformacionUsuario": {"label": "text", "helpText": "text"},
+      "TituloInformacionDelUsuario": {"label": "text", "helpText": "text"},
+      "customField": {"label": "text", "helpText": "text"}
+
+    }
+  }
+}

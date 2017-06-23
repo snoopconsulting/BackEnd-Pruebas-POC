@@ -1,0 +1,77 @@
+{
+  "name": "App Zendesk",
+  "author": {
+    "name": "Zendesk",
+    "email": "support@zendesk.com",
+    "url": "https://help.zendesk.com"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": {
+    "support": {
+      "background": "assets/public/templates/html/ticketInfo.html",
+      "new_ticket_sidebar": "assets/public/templates/html/ticketInfo.html",
+      "ticket_sidebar": "assets/public/templates/html/iframe.html",
+      "nav_bar": "assets/public/templates/html/nav-bar.html",
+      "top_bar": "assets/public/templates/html/top-bar.html"
+    }
+  },
+  "parameters": [
+    {
+      "name": "UrlApiRest",
+      "type": "url",
+      "required": true,
+      "default": ""
+    },
+    {
+      "name": "UrlInformacionUsuario",
+      "type": "url",
+      "required": true,
+      "default": ""
+    },
+    {
+      "name": "TituloInformacionDelUsuario",
+      "type": "text",
+      "required": true,
+      "default": ""
+    },
+    {
+      "name": "customField",
+      "type": "text",
+      "required": true,
+      "default": ""
+    },
+    {
+      "name": "UrlPaguina",
+      "type": "url",
+      "required": true,
+      "default": ""
+    },
+    {
+      "name": "ticket_formato",
+      "type": "checkbox",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "ticket_id",
+      "type": "text",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "ticket_description",
+      "type": "text",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "ticket_status",
+      "type": "text",
+      "required": false,
+      "default": ""
+    }
+  ],
+  "version": "1.0",
+  "frameworkVersion": "2.0"
+}

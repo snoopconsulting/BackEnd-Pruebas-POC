@@ -1,0 +1,97 @@
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+      integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+
+<LINK href="../../css/styles.css" rel="stylesheet" type="text/css">
+
+<body>
+
+<div>
+
+    <center>
+        <img src="http://cognitiva.la/wp-content/themes/Watson/images/logos/Snoop.jpg">
+    </center>
+
+    {{#if error}}
+
+        <h3>RECURSO NO ENCONTRADO</h3>
+
+        {{error}}
+
+    {{else}}
+
+        <a href="#contenedorPrincipal" class="btn btn-info btn-block"
+           data-toggle="collapse">{{objectoPrincipal.titulo}}</a>
+
+    <div id="contenedorPrincipal" class="collapse">
+
+        <h3>{{objectoPrincipal.titulo}}</h3>
+
+        <table class="table table-striped">
+            <th>Campo</th>
+            <th>Valor</th>
+            {{#each objectoPrincipal.objetos}}
+                <tr>
+                    <td>{{campo}}</td>
+                    <td>
+                        {{#each valor}}
+                            <a href="#{{this}}" class="btn btn-info btn-block"
+                               data-toggle="collapse">ir a {{this}}</a>
+                        {{else}}
+                            {{valor}}
+                        {{/each}}
+
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+
+
+
+        {{#each objectosSecundarios}}
+
+            <div id="{{titulo}}" class="collapse">
+
+                <a href="#{{titulo}}" class="btn btn-block black-background white"
+                   data-toggle="collapse">{{titulo}}</a>
+
+                <table class="table table-striped">
+                    <th>Campo</th>
+                    <th>Valor</th>
+                    {{#each objetos}}
+                        <tr>
+                            <td>{{campo}}</td>
+                            <td>
+                                {{#each valor}}
+                                    <a href="#{{this}}" class="btn btn-info btn-block"
+                                       data-toggle="collapse"> ir a {{this}}</a>
+                                {{else}}
+                                    {{valor}}
+                                {{/each}}
+
+                            </td>
+                        </tr>
+                    {{/each}}
+                </table>
+            </div>
+
+        {{/each}}
+
+    {{/if}}
+
+</div>
+
+</div>
+
+</body>
+

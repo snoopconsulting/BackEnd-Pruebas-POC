@@ -1,0 +1,19 @@
+{
+  "app": {
+    "description": "Demo Ticket Sidebar app.",
+    "name": "Basic Ticket Sample App",
+    "parameters": {
+      "UrlApiRest" : { "label": "Url de la api rest", "helpText": "Ingrese la direccion de su api rest" },
+      "ticket_formato" : { "label": "Desea usar el ticket por defecto de zendesk?", "helpText": "Seleccione si desea obtener el ticket de Zendesk en su formato original, si selecciono esta opcion no complete los demas campos a continuacion" },
+      "ticket_id"     : { "label": "Campo Relacional Ticket ID", "helpText": "deje en blanco si no tiene" },
+      "ticket_description"    : { "label": "Campo Relacional Ticket Descripcion", "helpText": "deje en blanco si no tiene" },
+      "ticket_status"    : { "label": "Campo Relacional Ticket  Status", "helpText": "deje en blanco si no tiene" },
+      "UrlPaguina"    : { "label": "Url a mostrar" },
+      "UrlInformacionUsuario": {"label": "Ingrese Url Api Rest", "helpText": "Debe ingresar una url donde se obtendran los datos extra del usuario asignado al ticket, debe de devolver un formato Json. Ejemplo Url https://web.com/usuario/123 donde 123 es su usuario debe ingresar https://web.com/usuario/"},
+      "TituloInformacionDelUsuario": {"label": "Ingrese titulo de la Informacion obtenida", "helpText": "Asignele un titulo a la informacion extra ingresada desde su api Rest"},
+      "customField": {"label": "Nombre del Campo creado en zendesk", "helpText": "Ingrese el nombre del campo creado en los usuarios de zendesk"}
+    }
+  }
+}
+
+
