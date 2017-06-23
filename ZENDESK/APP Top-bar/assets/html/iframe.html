@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/jquery/3.0.0/jquery.min.js"></script>
+<script
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js">
+</script>
+
+<script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous">
+</script>
+
+</body>
+
+<script type="text/javascript" src="https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js"></script>
+
+<script type="text/javascript" src="../js/main.js"></script>
+
+
+<!-- Formulario de busqueda principal -->
+<div id="buscar_dni" type="text/x-handlebars-template" align="center">
+    <img src="http://cognitiva.la/wp-content/themes/Watson/images/logos/Snoop.jpg">
+    <br>
+    <form>
+        <div class="input-group" id="task-form">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+            <input id="dni" type="text" class="form-control" name="dni" placeholder="Ingrese un DNI">
+        </div>
+        <button id="add-btn" class="btn btn-primary btn-small">
+            <span class="glyphicon glyphicon-search"></span>
+            Buscar
+        </button>
+    </form>
+    <br>
+    <br>
+</div>
+<!-- Formulario de busqueda principal -->
+
+
+<!-- Mensaje enviado una vez encontrado un usuario en zendesk -->
+<div id="user" class="alert alert-success"></div>
+<script id="userInfo" type="text/x-handlebars-template">
+    <div align="center">
+        {{titulo}}
+    </div>
+    Nombre: {{name}}
+    <br>
+    DNI: {{dni}}
+</script>
+<!-- Mensaje enviado una vez encontrado un usuario en zendesk -->
+
+
+<!-- Mensaje de error emitido por Zendesk -->
+<div id="userError" class="alert alert-danger"></div>
+<script id="userErrorInfo" type="text/x-handlebars-template">
+    Error: {{error}}
+    <br>
+    {{description}}
+</script>
+<!-- Mensaje de error emitido por Zendesk -->
+
+
+<!-- Formulario para la creacion de un nuevo usuario -->
+<div id="userForm">
+    <h3 align="center">Nuevo usuario</h3><br>
+    <div class="input-group">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+        <input id="name" type="text" class="form-control" name="name" placeholder="Ingrese un nombre">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+        <input id="email" type="text" class="form-control" name="email" placeholder="Ingrese un E-mail">
+    </div>
+    <div align="center">
+        <button type="button" class="btn btn-primary btn-small" id="btn1" align="center">Crear usuario</button>
+    </div>
+</div>
+<!-- Formulario para la creacion de un nuevo usuario -->
+
+
+<!-- Formulario para la creacion de un nuevo Ticket -->
+<div id="ticketForm">
+    <h3 align="center">Nuevo Ticket</h3>
+    <div class="form-group">
+        <label for="subject">Titulo</label>
+        <input type="text" class="form-control" id="subject">
+    </div>
+    <div class="form-group">
+        <label for="desc">Descripcion:</label>
+        ​<textarea class="form-control" rows="4" cols="40" id="desc"></textarea>
+    </div>
+    <div align="center">
+        <button type="button" class="btn btn-primary btn-small" id="botonTicket">
+            <span class="glyphicon glyphicon-edit"></span>
+            Crear ticket
+        </button>
+    </div>
+</div>
+<!-- Formulario para la creacion de un nuevo Ticket -->
+
+
+<!-- Muestra un mensaje una vez creado un ticket -->
+<div id="ticket" class="alert alert-success"></div>
+<script id="ticketInfo" type="text/x-handlebars-template">
+    Ticket creado con el ID: {{id}}
+</script>
+<!-- Muestra un mensaje una vez creado un ticket -->
+
+
+</html>
