@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd">
+    <ws:consumer-config name="Web_Service_Consumer" service="MensajeriaNotificacionMail" port="NotificacionMailServiceImplPort" serviceAddress="http://localhost:9000/enviarEmail" wsdlLocation="http://localhost:9000/?wsdl" doc:name="Web Service Consumer"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8081" doc:name="HTTP Listener Configuration" basePath="mipath"/>
+    <ws:consumer-config name="Web_Service_Consumer1" service="MensajeriaNotificacionMail" port="NotificacionMailServiceImplPort" serviceAddress="http://localhost:9000/enviarEmail" wsdlLocation="http://localhost:9000/enviarEmail?wsdl" doc:name="Web Service Consumer"/>
+    <flow name="practica4Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/request" doc:name="HTTP" allowedMethods="GET"/>
+        <logger message="datos de entrada #[message.inboundProperties.'http.query.params'.asunto]" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="b43a008d-314d-4203-8da7-2789b3492bf1">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+%namespace ns0 ar.com.osde.services.it.mensajeria.notificacionMail
+---
+{
+	ns0#enviarNotificacionMail: {
+		bodyRequest: {
+			asunto: inboundProperties.'http.query.params'.asunto as :string
+		}
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="payload actual : #[message.payload]" level="INFO" doc:name="Logger"/>
+        <ws:consumer config-ref="Web_Service_Consumer1" operation="enviarNotificacionMail" doc:name="Web Service Consumer"/>
+        <logger message="respuesta del servicio:  #[message.payload]" level="INFO" doc:name="Logger"/>
+        <json:xml-to-json-transformer doc:name="XML to JSON"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="############################ERROR_CATCH############################" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

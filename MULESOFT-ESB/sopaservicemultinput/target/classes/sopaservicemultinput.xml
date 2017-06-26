@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8081" doc:name="HTTP Listener Configuration"/>
+    <flow name="sopaservicemultinputFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/multi" doc:name="HTTP"/>
+        <cxf:jaxws-service doc:name="CXF" serviceClass="com.mycode.IHelloWorld"/>
+        <component doc:name="Java" class="com.mycode.HelloWorld"/>
+        <set-session-variable variableName="variable" value="#[payload[0]]" doc:name="Session Variable"/>
+        <set-variable variableName="var2" value="#[new java.util.ArrayList(Arrays.asList('juan','pepo',66,payload[0], payload[1] ))]" doc:name="Variable"/>
+        <logger message="Contenido payload segundo parametro: #[payload[1]]" level="INFO" doc:name="Logger"/>
+        <logger message="Contenido payload array de parametros completo: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Variable: #[sessionVars.variable]" level="INFO" doc:name="Logger"/>
+        <logger message="variable 2 : #[var2]" level="INFO" doc:name="Logger"/>
+        <set-payload value="#[var2]" doc:name="Set Payload"/>
+        <logger message="Final paylod: #[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
