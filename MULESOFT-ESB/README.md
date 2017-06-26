@@ -11,7 +11,7 @@
     Veremos como crear un webservice con el componente CXF de mulesoft utilizando la operacion JAX-WS service.
    
 ## ftp3
-    Se muestra como configurar el componente ftp, para obtener archivos desde un servidor ftp. y luego copiarlos a una ruta determinada 
+    Se muestra como configurar el componente ftp, para obtener archivos desde un servidor ftp, luego copiarlos a una ruta determinada 
     con el componente file de mulesoft.
     
 ## mail
