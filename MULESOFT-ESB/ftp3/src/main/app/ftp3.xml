@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <ftp:connector name="FTP" pollingFrequency="1000" validateConnections="true" doc:name="FTP" streaming="true">
+    </ftp:connector>
+    <file:connector name="File" autoDelete="true" streaming="true" validateConnections="true" doc:name="File" writeToDirectory="C:\filesprueba\output"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8081" doc:name="HTTP Listener Configuration"/>
+    <flow name="ftp3Flow1">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/movefile" doc:name="HTTP"/>
+        <set-payload value="localhost" doc:name="Set Payload"/>
+        <logger message="PARAM: #[message.inboundProperties.'http.query.params'.file]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="movefile" doc:name="movefile"/>
+    </flow>
+    <flow name="movefile" initialState="started">
+        <ftp:inbound-endpoint host="localhost" port="21" user="jose" password="luzbelito1982" connector-ref="FTP" responseTimeout="10000" doc:name="FTP" binary="false">
+         
+          <file:filename-wildcard-filter pattern="#[message.inboundProperties.'http.query.params'.file]"/>
+        </ftp:inbound-endpoint>
+        <logger level="INFO" doc:name="Logger" message="LOGGER: #[payload]"/>
+        <file:outbound-endpoint connector-ref="File" responseTimeout="10000" doc:name="File" path="C:\filesprueba\output" outputPattern="#[message.inboundProperties.'http.query.params'.file]"/>
+    </flow>
+</mule>
+
+   

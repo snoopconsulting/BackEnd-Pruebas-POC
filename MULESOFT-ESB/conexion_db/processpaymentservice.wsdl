@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ProcessPaymentServiceService" targetNamespace="http://processpayment.icp.sf/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://com.myapp.demo/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema">
+<import namespace="http://processpayment.icp.sf/" schemaLocation="processpaymentservice_schema1.xsd"/>
+</schema>
+  </wsdl:types>
+  <wsdl:message name="processPayment">
+    <wsdl:part name="parameters" element="tns:processPayment">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="processPaymentResponse">
+    <wsdl:part name="parameters" element="tns:processPaymentResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="IProcessPayment">
+    <wsdl:operation name="processPayment">
+      <wsdl:input name="processPayment" message="tns:processPayment">
+    </wsdl:input>
+      <wsdl:output name="processPaymentResponse" message="tns:processPaymentResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ProcessPaymentServiceServiceSoapBinding" type="tns:IProcessPayment">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="processPayment">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="processPayment">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="processPaymentResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:service name="ProcessPaymentServiceService">
+    <wsdl:port name="ProcessPaymentServicePort" binding="tns:ProcessPaymentServiceServiceSoapBinding">
+      <soap:address location="http://localhost:9999"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

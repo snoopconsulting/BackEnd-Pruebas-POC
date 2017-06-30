@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "Web_Service_Consumer",
+            "typeId": "enviarNotificacionMailResponse"
+        }
+    },
+    "id": "f095d091-5103-430c-93c9-3ff28fc1a8ee",
+    "version": "5.2.0.0"
+}
