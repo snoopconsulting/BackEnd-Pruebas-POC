@@ -1,6 +1,6 @@
 # CRON POSTEO MAILS EN WORKSPACE
 
-## instalacion
+## Instalación
 
 Instalar las dependencias npm
 ```
