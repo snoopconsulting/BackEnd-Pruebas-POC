@@ -1,4 +1,7 @@
 var MailParser = require('mailparser').MailParser;
+var simpleParser = require('mailparser').simpleParser;
+
+
 var Imap = require('imap');
 
 var facebookService = require('../facebook/index');
@@ -54,27 +57,33 @@ function getMailAndSendPost(imapConfig, groupId) {
 
         function processMessage(msg, seqno) {
 
-            var parser = new MailParser();
-            parser.on("headers", function (headers) {
-
-            });
-
-            parser.on('data', data => {
-                if (data.type === 'text') {
-
-                    facebookService.postInWorkSpace(groupId, data.text).then(resolve).catch(reject);
-                }
-
-            });
-
             msg.on("body", function (stream) {
-                stream.on("data", function (chunk) {
-                    parser.write(chunk.toString("utf8"));
-                });
+
+                simpleParser(stream, function (err, body) {
+
+
+                    if (body.attachments.length > 0) {
+
+                        console.log("este es el nombre del archivo", body.attachments[0].filename)
+
+                        facebookService.postInWorkSpaceAttachment(groupId, "hola", body.attachments[0].content, body.attachments[0].filename).then(resolve).catch(reject);
+
+                    }
+
+                    if(body.text && body.attachments.length === 0){
+
+                        console.log("encontre un nuevo texto plano")
+
+                        facebookService.postInWorkSpace(groupId, body.text).then(resolve).catch(reject);
+
+                    }
+
+                })
+
+
             });
             msg.once("end", function () {
                 console.log("Finished msg #" + seqno);
-                parser.end();
             });
         }
 

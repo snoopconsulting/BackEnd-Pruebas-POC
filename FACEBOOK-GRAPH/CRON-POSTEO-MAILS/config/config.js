@@ -23,6 +23,12 @@ module.exports = {
 
             }
         }
+    },
+    path:{
+        public:{
+            video: 'public/video/',
+            photo: 'public/imagen/',
+        }
     }
 
 }
