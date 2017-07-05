@@ -6,7 +6,7 @@ var Imap = require('imap');
 
 var facebookService = require('../facebook/index');
 
-const config = require('../../config/config');
+const config = require('../../../config/config');
 
 function getMailAndSendPost(imapConfig, groupId) {
 
@@ -23,21 +23,19 @@ function getMailAndSendPost(imapConfig, groupId) {
 
         function execute() {
             imap.openBox("INBOX", false, function (err, mailBox) {
-
                 if (err) {
                     reject(err);
                 }
                 imap.search(["UNSEEN"], function (err, results) {
                     if (!results || !results.length) {
-                        resolve("No unread mails");
+                        resolve("No se encontraron nuevos E-mail");
                         imap.end();
                         // si saco este return deja de funcionar error: "Empty uidlist"
                         return;
                     }
-
                     imap.setFlags(results, ['\\Seen'], function (err) {
                         if (!err) {
-                            console.log("marked as read");
+                            console.log("Mensaje marcado como leido");
                         } else {
                             console.log(JSON.stringify(err, null, 2));
                         }
@@ -48,7 +46,7 @@ function getMailAndSendPost(imapConfig, groupId) {
                     f.once("error", function (err) {
                     });
                     f.once("end", function () {
-                        console.log("Done fetching all unseen messages.");
+                        console.log("Se a terminado de buscar todos los mensajes nuevo.");
                         imap.end();
                     });
                 });
@@ -56,37 +54,28 @@ function getMailAndSendPost(imapConfig, groupId) {
         }
 
         function processMessage(msg, seqno) {
-
             msg.on("body", function (stream) {
-
                 simpleParser(stream, function (err, body) {
-
-
                     if (body.attachments.length > 0) {
-
-                        console.log("este es el nombre del archivo", body.attachments[0].filename)
-
-                        facebookService.postInWorkSpaceAttachment(groupId, "hola", body.attachments[0].content, body.attachments[0].filename).then(resolve).catch(reject);
-
+                        var nameArray = [];
+                        for(let attachmment of body.attachments) nameArray.push(attachmment.filename);
+                        console.log("Hay un nuevo email con archivos adjuntos", nameArray);
+                        facebookService.postInWorkSpaceAttachment(groupId, body.text, body.attachments)
+                            .then(resolve)
+                            .catch(reject);
                     }
-
                     if(body.text && body.attachments.length === 0){
-
-                        console.log("encontre un nuevo texto plano")
-
-                        facebookService.postInWorkSpace(groupId, body.text).then(resolve).catch(reject);
-
+                        console.log("Hay un nuevo email plano");
+                        facebookService.postInWorkSpace(groupId, body.text)
+                            .then(resolve)
+                            .catch(reject);
                     }
-
                 })
-
-
             });
             msg.once("end", function () {
-                console.log("Finished msg #" + seqno);
+                console.log("La lectura del mensaje #" + seqno + "a finalizado");
             });
         }
-
     })
 
 }

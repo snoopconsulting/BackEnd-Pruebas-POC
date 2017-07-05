@@ -1,8 +1,8 @@
 module.exports = {
     imap: {
-        accounts:{
-            snoopPrueba:{
-                setting:{
+        accounts: {
+            snoopPrueba: {
+                setting: {
                     user: 'maxilopez2223@gmail.com',
                     password: '123456asd',
                     host: 'imap.gmail.com',
@@ -13,21 +13,40 @@ module.exports = {
         }
 
     },
-    facebook:{
+    facebook: {
         url: "https://graph.facebook.com/",
         token: "?access_token=DQVJ2VFBQTzZAER3JuZA1JtcTZAiamJYem5ZAZAGQwTGpSWDFxbkR5VExnNlc5S0NwUzRQcDVfRUpramJ6WlhmUktzUjZAyeWNkWGwtVGJRaHhkRzNaOGljNHkwV1hvNUdWb3FIM2ljT3pZAS21DVHpVS3lTZAF91OUJFdktOcnFLRWJYcjJMLTVDU09FeTM3d2ZAaVzBUZA2dVNy15RXRna0lkZADB0QjMxbE13Qm5yTUd3ZAE9kS2RPazhsY0VmRjFyb09TOVBaTXV6Nm1ocUdKOFd3b0ZAUUwZDZD",
-        accounts:{
-            snoopPruebas:{
+        accounts: {
+            snoopPruebas: {
                 id: 287544715050657
-
-
             }
         }
     },
-    path:{
-        public:{
+    path: {
+        public: {
             video: 'public/video/',
             photo: 'public/imagen/',
+        }
+    },
+    google: {
+        configuration: {
+            client_id: "713347869040-7jjjismmphmnp3rgfgibvgofqob3ao7c.apps.googleusercontent.com",
+            project_id: "heroic-light-172718",
+            auth_uri: "https://accounts.google.com/o/oauth2/auth",
+            token_uri: "https://accounts.google.com/o/oauth2/token",
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+            client_secret: "mHwqC7FthBoA_cAaFnORXxlZ",
+            redirect_uris: [
+                "http://localhost:6004/api/callback"
+            ],
+            javascript_origins: [
+                "http://localhost:6004"
+            ]
+        },
+        drive: {
+            folders:{
+                imagen: ""
+            }
         }
     }
 
