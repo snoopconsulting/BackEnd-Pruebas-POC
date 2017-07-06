@@ -8,7 +8,7 @@ var facebookService = require('../facebook/index');
 
 const config = require('../../../config/config');
 
-function getMailAndSendPost(imapConfig, groupId) {
+function getMailAndSendPost(imapConfig) {
 
     return new Promise((resolve, reject) => {
 
@@ -56,11 +56,14 @@ function getMailAndSendPost(imapConfig, groupId) {
         function processMessage(msg, seqno) {
             msg.on("body", function (stream) {
                 simpleParser(stream, function (err, body) {
+
+
+                    var groupId = config.postMailGroupId[body.to.text];
+
+
                     if (body.attachments.length > 0) {
-                        var nameArray = [];
-                        for(let attachmment of body.attachments) nameArray.push(attachmment.filename);
-                        console.log("Hay un nuevo email con archivos adjuntos", nameArray);
-                        facebookService.postInWorkSpaceAttachment(groupId, body.text, body.attachments)
+
+                        facebookService.postInWorkSpaceAttachmentForGoogle(groupId, body.text, body.attachments)
                             .then(resolve)
                             .catch(reject);
                     }

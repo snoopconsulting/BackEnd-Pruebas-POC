@@ -17,10 +17,10 @@ var googleServicesFile =require('./files/google-file');
 
 
 
-function uploadImagen(resource, media) {
-    return new Promise((reject, resolve) =>{
+function uploadImagen(fileName, extension, file, folder) {
+    return new Promise((resolve, reject) =>{
             googleServicesAouth.authorize().then(oauth =>{
-                googleServicesFile.uploadImagen(oauth, resource, media)
+                googleServicesFile.upload(oauth, fileName, extension, file, folder)
                     .then(response => resolve(response))
                     .catch(err => reject(err))
             })

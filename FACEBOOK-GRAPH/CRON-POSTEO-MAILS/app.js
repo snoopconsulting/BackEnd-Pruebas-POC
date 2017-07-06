@@ -1,11 +1,10 @@
-var CronJob = require('cron').CronJob;
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var express = require('express');
 var morgan = require('morgan');
 var cfenv = require('cfenv');
 
-var imapService = require('./modules/service/imap/index');
+var cron = require('./modules/cron/cron');
 var routes =require('./modules/routes/index');
 
 const app = express();
@@ -23,14 +22,8 @@ function initRoutes() {
 }
 
 function initCron() {
-    new CronJob('0 */1 * * * *', function () {
-
-        console.log('Buscando nuevos E-mail');
-        imapService.PostToSnoopPruebas()
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-
-    }, null, true, 'America/Argentina/Buenos_Aires');
+    cron.postInWorkPlace();
+    cron.refreshTokenGoogle();
 }
 
 function initServer() {
@@ -42,20 +35,9 @@ function initServer() {
         console.log("Host: " + appEnv.url);
     });
 }
-initCron();
 initMiddlewares();
 initRoutes();
 initServer();
+initCron();
 
 
-
-
-
-// SERVICIOS DE GOOOOOGLE DRIVE
-var googleServices = require('./modules/service/google/index');
-
-//se debe pasar resource y media como parametros
-googleServices.uploadImagen()
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
-// SERVICIOS DE GOOOOOGLE DRIVE

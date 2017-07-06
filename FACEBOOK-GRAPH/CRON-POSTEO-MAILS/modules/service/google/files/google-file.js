@@ -1,14 +1,22 @@
 var google = require('googleapis');
-var fs = require('fs');
-var path = require('path');
 
 
+function upload(auth, fileName, extension, file, folder) {
 
-function uploadImagen(auth, resource, media) {
-
-    return new Promise((resolve, reject)=>{
-        var service = google.drive('v2');
-        service.files.insert({resource, media, auth}, function(err, response) {
+    return new Promise((resolve, reject) => {
+        var drive = google.drive('v2');
+        drive.files.insert({
+            resource: {
+                title: fileName,
+                mimeType: 'image/' + extension,
+                parents: [{id: folder}]
+            },
+            media: {
+                mimeType: 'image/' + extension,
+                body: file
+            },
+            auth: auth
+        }, function (err, response) {
             if (err) reject(err);
             resolve(response);
         });
@@ -16,6 +24,10 @@ function uploadImagen(auth, resource, media) {
 
 }
 
+function obtainUrlImagen(selfLink) {
+
+}
+
 module.exports = {
-    uploadImagen
+    upload
 };

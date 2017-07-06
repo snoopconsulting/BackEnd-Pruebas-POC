@@ -5,6 +5,8 @@ var path = require('path');
 
 const config = require('../../../config/config');
 const message = require('../../../utils/message-utils');
+var googleServices = require('../../service/google/index');
+var functionService = require('../functions/functions')
 
 
 function postInWorkSpace(groupId, data) {
@@ -26,70 +28,80 @@ function postInWorkSpace(groupId, data) {
 }
 
 // ahora recibe attachments
-function postInWorkSpaceAttachment(groupId, data, attachments) {
-    return new Promise((resolve, reject) => {
+function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
+    return new Promise((resolve) => {
 
         const arrayError = [];
         const arrayResult = [];
         // leo todos los attachments y si no es una imagen no lo proceso
+        var cantAttachments = attachments.length;
         for (let attachment of attachments) {
+            var flag = 1;
+
 
             //obtengo el nombre del archivo y la extension
             const nombreAttachmentCompleto = attachment.filename.split('.');
             const nombreAttachment = nombreAttachmentCompleto[0];
             const extensionAttachment = nombreAttachmentCompleto[1];
 
-            if (extensionAttachment == "jpg" || "jpeg" || "png") {
-                console.log("no se puede cargar este archivo debido su extension")
+
+            console.log("archivo cargado en Drive....");
+
+            console.log(extensionAttachment)
+
+            if(extensionAttachment === 'jpg' || 'JPG' || 'JPEG' || 'jpeg' || 'png' || 'PNG' || 'BMP' || 'bmp'){
+                googleServices.uploadImagen(nombreAttachment, extensionAttachment, attachment.content, config.google.drive.folders.imagen)
+                    .then(result => {
+                        console.log("archivo cargado exitosamente en drive");
+
+                        var urlArray = result.webContentLink.split('&export=download');
+                        var urlImagen = urlArray[0];
+
+                        const url = config.facebook.url + groupId + '/photos' + config.facebook.token;
+
+                        const form = {
+                            message: data,
+                            //source: attachment.content,
+                            url: urlImagen
+                        };
+
+
+                        requester.post({url, form}, function (err, res, body) {
+
+                            if (err) arrayError.push(message.error.other.generic, err);
+
+                            //TODO PROBAR PARA MAS DE DOS ARCHIVOS
+                            if (JSON.parse(body).hasOwnProperty('error')) {
+                                arrayError.push(message.error.facebook.generic, body);
+                                if (flag === cantAttachments) resolve({error: arrayError, result: arrayResult});
+                                else flag++
+                            } else {
+                                arrayResult.push(message.success.facebook.upload.image, body);
+                                if (flag === cantAttachments) resolve({error: arrayError, result: arrayResult});
+                                else flag++
+                            }
+
+                        });
+                    })
+
+                    .catch(err => console.log(err))
+
+            }else{
+
+
+                console.log('no es una imagen el dato adjunto')
+
             }
-
-            //seteo la ruta de mi imagen dentro del proyecto
-            const rutaImagen = config.path.public.photo + nombreAttachment + '.jpg';
-
-            //Guarda el archivo localmente
-            //Meto el resto de las funciones por motivos asincronos(la imagen no se crea y no puede leerla aun )
-            fs.writeFile(path.join(rutaImagen), attachment.content, function () {
-                console.log("se ah cargado una nueva imagen: " + nombreAttachment + '.jpg');
-
-                // cargo el archivo en una variable (NO ACEPTA IMAGENES PNG)
-                const file = fs.createReadStream(path.join(rutaImagen));
-
-                const url = config.facebook.url + groupId + '/photos' + config.facebook.token;
-
-                const form = {
-                    message: data,
-                    source: file,
-                    // url: rutaBase + rutaImagen
-                };
-
-                requester.post({url, form}, function (err, res, body) {
-                    if (err) arrayError.push(message.error.other.generic, err);
-
-                    // elimina la imagen una vez utilizada
-                    //fs.unlinkSync(path.join(rutaImagen));
-
-                    if (body.hasOwnProperty('error')) {
-                        arrayError.push(message.error.facebook.generic, body);
-                    } else {
-                        arrayResult.push(message.success.facebook.upload.image, body)
-                    }
-
-                });
-
-
-
-            });
 
 
 
         }
 
-        resolve({error: arrayError, result: arrayResult})
 
     })
 }
 
 module.exports = {
     postInWorkSpace,
-    postInWorkSpaceAttachment
+    postInWorkSpaceAttachmentForGoogle
 };
