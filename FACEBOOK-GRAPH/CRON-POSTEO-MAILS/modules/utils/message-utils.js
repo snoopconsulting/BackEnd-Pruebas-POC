@@ -14,6 +14,10 @@ module.exports = {
               post: "Se a emitido un nuevo POST en WorkPlace"
           }
       }
+    },
+    other:{
+        administrator:{
+            email: "Email del administrador de la app"
+        }
     }
-
 }

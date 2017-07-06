@@ -22,19 +22,18 @@ function initRoutes() {
 }
 
 function initCron() {
-    cron.postInWorkPlace();
+    cron.postInWorkPlaceSnoopPruebas();
     cron.refreshTokenGoogle();
 }
 
 function initServer() {
-
     var appEnv = cfenv.getAppEnv();
-
     app.listen(appEnv.port, () => {
         console.log("Started application");
         console.log("Host: " + appEnv.url);
     });
 }
+
 initMiddlewares();
 initRoutes();
 initServer();

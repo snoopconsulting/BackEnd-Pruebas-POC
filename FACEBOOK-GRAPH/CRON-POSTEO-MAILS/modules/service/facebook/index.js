@@ -1,15 +1,13 @@
 var requester = require('request');
 var fs = require('fs');
-
 var path = require('path');
 
 const config = require('../../../config/config');
-const message = require('../../../utils/message-utils');
+const message = require('../../utils/message-utils');
 var googleServices = require('../../service/google/index');
-var functionService = require('../functions/functions')
 
 
-function postInWorkSpace(groupId, data) {
+function postInWorkPlace(groupId, data) {
 
     return new Promise((resolve, reject) => {
 
@@ -102,6 +100,6 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
 }
 
 module.exports = {
-    postInWorkSpace,
+    postInWorkPlace,
     postInWorkSpaceAttachmentForGoogle
 };

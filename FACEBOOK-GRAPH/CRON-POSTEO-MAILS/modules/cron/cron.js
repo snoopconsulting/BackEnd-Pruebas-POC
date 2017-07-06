@@ -13,16 +13,16 @@ function refreshTokenGoogle() {
     }, null, true, 'America/Argentina/Buenos_Aires');
 }
 
-function postInWorkPlace() {
+function postInWorkPlaceSnoopPruebas() {
     new CronJob('0 */1 * * * *', function () {
         console.log('Buscando nuevos E-mail');
-        imapService.postInWorkPlace()
+        imapService.postInWorkPlaceSnoopPruebas()
             .then(response => console.log('respuesta: ', response))
             .catch(error => console.log(error));
     }, null, true, 'America/Argentina/Buenos_Aires');
 }
 
 module.exports = {
-    postInWorkPlace,
+    postInWorkPlaceSnoopPruebas,
     refreshTokenGoogle
 };
