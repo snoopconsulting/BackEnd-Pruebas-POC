@@ -9,7 +9,7 @@ function upload(auth, fileName, extension, file, folder) {
             resource: {
                 title: fileName,
                 mimeType: 'image/' + extension,
-                parents: [{id: folder}]
+                parents: [{ id: folder }]
             },
             media: {
                 mimeType: 'image/' + extension,
@@ -24,10 +24,21 @@ function upload(auth, fileName, extension, file, folder) {
 
 }
 
-function obtainUrlImagen(selfLink) {
+function deleteFile(auth, id) {
+    return new Promise((resolve, reject) => {
+        var drive = google.drive({ version: 'v2', auth: auth });
+        drive.files.delete({
+            'fileId': id
+        }, function (err, response) {
+            if (err) reject(err);
+            resolve(response);
+        });
 
+    })
 }
 
+
 module.exports = {
-    upload
+    upload,
+    deleteFile
 };

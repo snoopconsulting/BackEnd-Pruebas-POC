@@ -42,16 +42,9 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
             const nombreAttachment = nombreAttachmentCompleto[0];
             const extensionAttachment = nombreAttachmentCompleto[1];
 
-
-            console.log("archivo cargado en Drive....");
-
-            console.log(extensionAttachment)
-
             if(extensionAttachment === 'jpg' || 'JPG' || 'JPEG' || 'jpeg' || 'png' || 'PNG' || 'BMP' || 'bmp'){
                 googleServices.uploadImagen(nombreAttachment, extensionAttachment, attachment.content, config.google.drive.folders.imagen)
                     .then(result => {
-                        console.log("archivo cargado exitosamente en drive");
-
                         var urlArray = result.webContentLink.split('&export=download');
                         var urlImagen = urlArray[0];
 
@@ -67,6 +60,8 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
                         requester.post({url, form}, function (err, res, body) {
 
                             if (err) arrayError.push(message.error.other.generic, err);
+                            
+                            googleServices.deleteFiles(result.id)
 
                             //TODO PROBAR PARA MAS DE DOS ARCHIVOS
                             if (JSON.parse(body).hasOwnProperty('error')) {
