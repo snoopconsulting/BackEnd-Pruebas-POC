@@ -1,6 +1,5 @@
 var cfenv = require('cfenv');
 
-
 module.exports = {
     error: {
         facebook: {
@@ -20,8 +19,12 @@ module.exports = {
                 post: "Se a emitido un nuevo POST en WorkPlace"
             }
         },
-        google: {
-            generatedToken: "Nuevo token generado exitosamente"
+        google:{
+            apiRest:{
+                createFolder: "CARPETA GENERADA CON EXITO, POR FAVOR GUARDELA EN EL ARHIVO DE CONFIGURACION",
+                listFile: "LISTADO DE ARCHIVOS",
+                deleteFile: "ARCHIVO ELIMINADO CON EXITO"
+            }
         }
     },
     other: {

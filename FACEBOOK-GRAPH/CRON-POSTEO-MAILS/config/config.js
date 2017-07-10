@@ -18,8 +18,8 @@ module.exports = {
         },
         drive: {
             folders:{
-                imagen: "0B5GMXmDIkPM6TlE3OGQ0YmxSTDQ",
-                adjunto: "0B5GMXmDIkPM6VDF1QzAwbDFBclk"
+                imagen: "0B1lXcC7vKmJCSFNLS0lSQ20yVGc", // carpeta: folder-image
+                adjunto: "0B1lXcC7vKmJCREZLTmZXV01oaWc" // carpeta: folder-attachments
             }
         }
     },

@@ -4,7 +4,7 @@ var path = require('path');
 
 const config = require('../../../config/config');
 const message = require('../../utils/message-utils');
-var googleServices = require('../../service/google/index');
+var googleServices = require('../google/google-service');
 var validate = require('../../utils/validate-utils')
 
 

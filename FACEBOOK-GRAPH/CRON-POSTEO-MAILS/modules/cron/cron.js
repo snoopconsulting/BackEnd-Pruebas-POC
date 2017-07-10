@@ -3,7 +3,7 @@ var CronJob = require('cron').CronJob;
 var imapService = require('./../service/imap/index');
 
 function postInWorkPlaceSnoopPruebas() {
-    new CronJob('* * * * * *', function () {
+    new CronJob('0 */1 * * * *', function () {
         console.log('Buscando nuevos E-mail');
         imapService.postInWorkPlaceSnoopPruebas()
             .then(response => console.log('respuesta: ', response))

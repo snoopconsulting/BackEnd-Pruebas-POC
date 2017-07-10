@@ -9,8 +9,8 @@ function uploadFile(oauth, fileName, extension, file, folder) {
         drive.files.insert({
             resource: {
                 title: fileName,
-                mimeType: type + '/' + extension
-                //parents: [{id: folder}]
+                mimeType: type + '/' + extension,
+                parents: [{id: folder}]
             },
             media: {
                 mimeType: type + '/' + extension,
@@ -71,10 +71,24 @@ function deleteFile(oauth, id) {
     })
 }
 
+function listFiles(oauth) {
+    return new Promise((resolve, reject) => {
+        var drive = google.drive('v3');
+        drive.files.list({
+            fields: "files(id, name)",
+            auth: oauth
+        }, function (err, response) {
+            if (err) reject(err);
+            resolve(response);
+        });
+    })
+}
+
 
 module.exports = {
     uploadFile,
     setPublicPermissions,
     createFolder,
-    deleteFile
+    deleteFile,
+    listFiles
 };
