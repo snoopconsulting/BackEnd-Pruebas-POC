@@ -14,7 +14,6 @@ function initMiddlewares() {
     app.use(bodyParser.json());
     app.use(morgan('combined'));
     app.use(cookieParser());
-    app.use("/public", express.static("public"));
 }
 
 function initRoutes() {
@@ -23,7 +22,6 @@ function initRoutes() {
 
 function initCron() {
     cron.postInWorkPlaceSnoopPruebas();
-    cron.refreshTokenGoogle();
 }
 
 function initServer() {

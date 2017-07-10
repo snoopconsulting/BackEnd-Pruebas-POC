@@ -5,6 +5,7 @@ var path = require('path');
 const config = require('../../../config/config');
 const message = require('../../utils/message-utils');
 var googleServices = require('../../service/google/index');
+var validate = require('../../utils/validate-utils')
 
 
 function postInWorkPlace(groupId, data) {
@@ -47,24 +48,27 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
 
             console.log(extensionAttachment)
 
-            if(extensionAttachment === 'jpg' || 'JPG' || 'JPEG' || 'jpeg' || 'png' || 'PNG' || 'BMP' || 'bmp'){
-                googleServices.uploadImagen(nombreAttachment, extensionAttachment, attachment.content, config.google.drive.folders.imagen)
-                    .then(result => {
+            if(validate.ifExtensionImage(extensionAttachment)){
+                googleServices.uploadFile(nombreAttachment, extensionAttachment, attachment.content, config.google.drive.folders.imagen)
+                    .then(imageResponse => {
                         console.log("archivo cargado exitosamente en drive");
 
-                        var urlArray = result.webContentLink.split('&export=download');
+                        var urlArray = imageResponse.webContentLink.split('&export=download');
                         var urlImagen = urlArray[0];
+
+                        console.log(urlImagen)
 
                         const url = config.facebook.url + groupId + '/photos' + config.facebook.token;
 
                         const form = {
                             message: data,
-                            //source: attachment.content,
                             url: urlImagen
                         };
 
 
                         requester.post({url, form}, function (err, res, body) {
+
+                            googleServices.delefeFile(imageResponse.id);
 
                             if (err) arrayError.push(message.error.other.generic, err);
 
