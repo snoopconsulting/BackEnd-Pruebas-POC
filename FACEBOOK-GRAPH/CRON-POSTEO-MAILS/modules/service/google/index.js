@@ -18,9 +18,26 @@ function deleteFiles(id) {
     })
 }
 
+
+function uploadFiles(fileName, extension, file, folder) {
+    return new Promise((resolve, reject) => {
+        googleServicesAouth.authorize().then(oauth => {
+            googleServicesFile.upload(oauth, fileName, extension, file, folder)
+                .then(response => resolve(response))
+                .catch(err => reject(err))
+        })
+    })
+}
+
+
+
+
+
 module.exports = {
     uploadImagen,
-    deleteFiles
+    deleteFiles,
+    uploadFiles
+
 };
 
 

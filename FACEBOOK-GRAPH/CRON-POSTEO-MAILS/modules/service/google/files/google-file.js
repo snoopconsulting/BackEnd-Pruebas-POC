@@ -1,18 +1,19 @@
 var google = require('googleapis');
-
+var validate = require("../../../utils/validate-utils")
 
 function upload(auth, fileName, extension, file, folder) {
-
+    var type = validate.typeFile(extension);
+    console.log(type);
     return new Promise((resolve, reject) => {
         var drive = google.drive('v2');
         drive.files.insert({
             resource: {
                 title: fileName,
-                mimeType: 'image/' + extension,
+                mimeType: type + '/' + extension,
                 parents: [{ id: folder }]
             },
             media: {
-                mimeType: 'image/' + extension,
+                mimeType: type + '/' + extension,
                 body: file
             },
             auth: auth
@@ -40,5 +41,5 @@ function deleteFile(auth, id) {
 
 module.exports = {
     upload,
-    deleteFile
+    deleteFile,
 };
