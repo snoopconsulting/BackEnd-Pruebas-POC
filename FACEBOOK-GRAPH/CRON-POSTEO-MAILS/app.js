@@ -22,6 +22,7 @@ function initRoutes() {
 
 function initCron() {
     cron.postInWorkPlaceSnoopPruebas();
+    cron.deleteOldsLogs()
 }
 
 function initServer() {
@@ -36,5 +37,3 @@ initMiddlewares();
 initRoutes();
 initServer();
 initCron();
-
-

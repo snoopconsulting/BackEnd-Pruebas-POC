@@ -32,4 +32,12 @@ module.exports = {
             email: "Email del administrador de la app"
         }
     },
+    log:{
+        startDelete: 'Eliminando Logs...',
+        successDelete: "logs eliminado con exito",
+        failDelete: "hubo un problema al eliminar los logs"
+    },
+    mail:{
+      startSearch: 'Buscando nuevos E-mail'
+    }
 };

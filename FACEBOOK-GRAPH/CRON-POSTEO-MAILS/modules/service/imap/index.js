@@ -1,4 +1,4 @@
-var imapService = require('./functions');
+var imapService = require('./imap-service');
 var imapConfig = require('../../../config/imap-config');
 
 //llamo a la misma funcion, le paso los datos de conexion del imap
