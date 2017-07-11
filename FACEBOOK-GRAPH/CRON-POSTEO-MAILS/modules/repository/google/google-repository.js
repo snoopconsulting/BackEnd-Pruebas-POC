@@ -8,7 +8,7 @@ function uploadFile(oauth, fileName, extension, file, folder) {
         var drive = google.drive('v2');
         drive.files.insert({
             resource: {
-                title: fileName,
+                title: fileName + '.' + extension,
                 mimeType: type + '/' + extension,
                 parents: [{id: folder}]
             },
