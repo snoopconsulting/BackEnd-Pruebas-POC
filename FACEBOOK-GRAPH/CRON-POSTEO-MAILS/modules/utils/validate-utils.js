@@ -18,9 +18,14 @@ function typeFile(extension){
     return extension === 'jpg' || extension === 'JPG' || extension === 'JPEG' || extension === 'jpeg' || extension === 'png' || extension === 'PNG' || extension === 'BMP' || extension === 'bmp' ? 'image' : 'file'
 }
 
+function isNullOrEmptyOrUndefined(data){
+   return data === null || data === '' || data === undefined
+}
+
 module.exports = {
     permissionMail,
     compareDates,
     ifExtensionImage,
-    typeFile
+    typeFile,
+    isNullOrEmptyOrUndefined
 };

@@ -8,14 +8,15 @@ var googleServices = require('../google/google-service');
 var validate = require('../../utils/validate-utils')
 
 
-function postInWorkPlace(groupId, data) {
+function postInWorkPlace(groupId, data, link) {
 
     return new Promise((resolve, reject) => {
-
-        const form = {message: data};
+        
+        const form = { message: data };
+        if(!validate.isNullOrEmptyOrUndefined(link)) form['link'] = link;
         const url = config.facebook.url + groupId + '/feed' + config.facebook.token;
 
-        requester.post({url, form}, function (err, res, body) {
+        requester.post({ url, form }, function (err, res, body) {
             if (err) reject(message.error.other.generic, err);
             if (body.hasOwnProperty('error')) reject(message.error.facebook.generic, body);
             resolve(message.success.facebook.upload.post, body);
@@ -34,6 +35,7 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
         const arrayResult = [];
         // leo todos los attachments y si no es una imagen no lo proceso
         var cantAttachments = attachments.length;
+        
         for (let attachment of attachments) {
             var flag = 1;
 
@@ -48,7 +50,7 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
 
             console.log(extensionAttachment)
 
-            if(validate.ifExtensionImage(extensionAttachment)){
+            if (validate.ifExtensionImage(extensionAttachment)) {
                 googleServices.uploadFile(nombreAttachment, extensionAttachment, attachment.content, config.google.drive.folders.imagen)
                     .then(imageResponse => {
                         console.log("archivo cargado exitosamente en drive");
@@ -66,7 +68,7 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
                         };
 
 
-                        requester.post({url, form}, function (err, res, body) {
+                        requester.post({ url, form }, function (err, res, body) {
 
                             googleServices.delefeFile(imageResponse.id);
 
@@ -75,11 +77,11 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
                             //TODO PROBAR PARA MAS DE DOS ARCHIVOS
                             if (JSON.parse(body).hasOwnProperty('error')) {
                                 arrayError.push(message.error.facebook.generic, body);
-                                if (flag === cantAttachments) resolve({error: arrayError, result: arrayResult});
+                                if (flag === cantAttachments) resolve({ error: arrayError, result: arrayResult });
                                 else flag++
                             } else {
                                 arrayResult.push(message.success.facebook.upload.image, body);
-                                if (flag === cantAttachments) resolve({error: arrayError, result: arrayResult});
+                                if (flag === cantAttachments) resolve({ error: arrayError, result: arrayResult });
                                 else flag++
                             }
 
@@ -88,16 +90,19 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
 
                     .catch(err => console.log(err))
 
-            }else{
-
-
-                console.log('no es una imagen el dato adjunto')
-
+            } else {
+                googleServices.uploadFile(nombreAttachment, extensionAttachment, attachment.content, config.google.drive.folders.adjunto)
+                    .then(fileResponse =>{
+                        console.log("Archivo guardado en el drive");
+                        var urlArray = fileResponse.alternateLink.split('&export=download');
+                        var urlFile = urlArray[0];
+                        postInWorkPlace(groupId, data, urlFile);        
+                    })
             }
 
 
-
         }
+
 
 
     })
