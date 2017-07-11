@@ -17,26 +17,40 @@ module.exports = {
 
         },
         drive: {
-            folders:{
+            folders: {
                 imagen: "0B1lXcC7vKmJCSFNLS0lSQ20yVGc", // carpeta: folder-image
                 adjunto: "0B1lXcC7vKmJCREZLTmZXV01oaWc" // carpeta: folder-attachments
             }
         }
     },
-    postMailGroupId:{
+    postMailGroupId: {
         // mailGoogle : grupoIDWorkPlace
-        "gdp-auto@snoopconsulting.com" : 287544715050657,
-        "ventas-auto@snoopconsulting.com" : 287544715050657,
-        "backend-auto@snoopconsulting.com" : 287544715050657,
+        "gdp-auto@snoopconsulting.com": 287544715050657,
+        "ventas-auto@snoopconsulting.com": 287544715050657,
+        "backend-auto@snoopconsulting.com": 287544715050657,
         "maxilopez2223@gmail.com": 287544715050657
     },
-    mailPermission:{
-        domain:{
+    mailPermission: {
+        domain: {
             "snoopconsulting.com": true,
             "snoopconsulting.com.ar": true
         },
-        mails:{
-          "cabamaximiliano@gmail.com": true
+        mails: {
+            "cabamaximiliano@gmail.com": true
+        }
+    },
+    cron: {
+        GTM: {
+            argentine: 'America/Argentina/Buenos_Aires'
+        },
+        timeSet: {
+            minutes: {
+                one: '0 */1 * * * *',
+                five: '0 */5 * * * *'
+            },
+            days: {
+                one: '0 0 */1 * * *'
+            }
         }
     }
 };

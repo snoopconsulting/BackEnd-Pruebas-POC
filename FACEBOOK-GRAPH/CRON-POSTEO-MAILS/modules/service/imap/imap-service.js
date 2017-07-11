@@ -2,7 +2,7 @@ var simpleParser = require('mailparser').simpleParser;
 
 var Imap = require('imap');
 
-var facebookService = require('../facebook/index');
+var facebookService = require('../facebook/facebook-service');
 var validate = require('../../../modules/utils/validate-utils')
 
 const config = require('../../../config/config');
