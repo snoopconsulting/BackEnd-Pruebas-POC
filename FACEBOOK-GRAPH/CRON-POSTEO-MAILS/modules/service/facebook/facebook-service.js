@@ -1,5 +1,4 @@
 var fs = require('fs');
-var path = require('path');
 
 const config = require('../../../config/config');
 const message = require('../../utils/message-utils');
@@ -31,7 +30,7 @@ function postInWorkPlace(groupId, data, link) {
 // ahora recibe attachments
 function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
     return new Promise((resolve, reject) => {
-        console.log("archivo cargado en Drive....");
+        console.log(message.google.uploadingFile);
         const arrayError = [];
         const arrayResult = [];
         const cantAttachments = attachments.length;
@@ -44,34 +43,28 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
                 .then(response => {
                     if (JSON.parse(response).hasOwnProperty('error')) {
                         logService.insertLog(response);
-                        reject(response)
+                        reject(response);
                     }
                     else resolve(response);
                 })
         } else {
             var promises = [];
-
             promises.push(facebookRepository.postPlainTextAndLink(groupId, data, ''));
-
             for (let attachment of attachments) {
-
-                console.log(attachment.filename)
                 const nombreAttachmentCompleto = attachment.filename.split('.');
                 const nombreAttachment = nombreAttachmentCompleto[0];
                 const extensionAttachment = nombreAttachmentCompleto[1];
-
                 promises.push(publishAttachment(nombreAttachment, extensionAttachment, attachment.content, cantAttachments, null, groupId));
             }
 
             Promise.all(promises)
                 .then(results => {
-                    console.log(results)
                     for (let result of results) {
-                        if (JSON.parse(result).hasOwnProperty('error')) arrayError.push(result)
-                        else arrayResult.push(result)
+                        if (JSON.parse(result).hasOwnProperty('error')) arrayError.push(result);
+                        else arrayResult.push(result);
                     }
-                    for(let err of arrayError) logService.insertLog(err)
-                    resolve(arrayResult, arrayError)
+                    for (let err of arrayError) logService.insertLog(err);
+                    resolve(arrayResult, arrayError);
                 })
         }
 
@@ -97,7 +90,7 @@ function publishAttachment(nombreAttachment, extensionAttachment, content, cantA
                         });
 
                 } else {
-                    console.log("Archivo guardado en el drive");
+                    console.log(message.google.uploadedFile);
                     var urlArray = response.alternateLink.split('&export=download');
                     var urlFile = urlArray[0];
                     if (cantAttachments === 1) facebookRepository.postPlainTextAndLink(groupId, data, urlFile)
