@@ -6,7 +6,9 @@ function uploadFile(fileName, extension, file, folder) {
         googleServicesAouth.authorizeService()
             .then(oauth => {
                 googleServices.uploadFile(oauth, fileName, extension, file, folder)
-                    .then(fileUpload => googleServices.setPublicPermissions(oauth, fileUpload.id).then(resolve).catch(reject))
+                    .then(fileUpload => googleServices.setPublicPermissions(oauth, fileUpload.id)
+                        .then(resolve(fileUpload))
+                        .catch(reject))
                     .catch(reject)
             })
             .catch(reject)

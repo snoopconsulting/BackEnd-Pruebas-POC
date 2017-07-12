@@ -54,6 +54,8 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
             promises.push(facebookRepository.postPlainTextAndLink(groupId, data, ''));
 
             for (let attachment of attachments) {
+
+                console.log(attachment.filename)
                 const nombreAttachmentCompleto = attachment.filename.split('.');
                 const nombreAttachment = nombreAttachmentCompleto[0];
                 const extensionAttachment = nombreAttachmentCompleto[1];
@@ -63,6 +65,7 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
 
             Promise.all(promises)
                 .then(results => {
+                    console.log(results)
                     for (let result of results) {
                         if (JSON.parse(result).hasOwnProperty('error')) arrayError.push(result)
                         else arrayResult.push(result)
