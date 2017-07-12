@@ -3,7 +3,8 @@ var simpleParser = require('mailparser').simpleParser;
 var Imap = require('imap');
 
 var facebookService = require('../facebook/facebook-service');
-var validate = require('../../../modules/utils/validate-utils')
+var validate = require('../../../modules/utils/validate-utils');
+var message = require('../../utils/message-utils');
 
 const config = require('../../../config/config');
 
@@ -27,27 +28,15 @@ function getMailAndSendPost(imapConfig) {
                 }
                 imap.search(["UNSEEN"], function (err, results) {
                     if (!results || !results.length) {
-                        resolve("No se encontraron nuevos E-mail");
+                        resolve(message.mail.emptyBox);
                         imap.end();
                         // si saco este return deja de funcionar error: "Empty uidlist"
                         return;
                     }
-                    imap.setFlags(results, ['\\Seen'], function (err) {
-                        if (!err) {
-                            console.log("Mensaje marcado como leido");
-                        } else {
-                            console.log(JSON.stringify(err, null, 2));
-                        }
-                    });
+                    imap.setFlags(results, ['\\Seen'], function (err) {});
 
                     var f = imap.fetch(results, {bodies: ""});
                     f.on("message", processMessage);
-                    f.once("error", function (err) {
-                    });
-                    f.once("end", function () {
-                        console.log("Se a terminado de buscar todos los mensajes nuevo.");
-                        imap.end();
-                    });
                 });
             });
         }
@@ -64,17 +53,15 @@ function getMailAndSendPost(imapConfig) {
                                 .catch(reject);
                         }
                         if(body.text && body.attachments.length === 0){
-                            console.log("Hay un nuevo email plano");
                             facebookService.postInWorkPlace(groupId, body.text)
                                 .then(resolve)
                                 .catch(reject);
                         }
                     }
-
                 })
             });
             msg.once("end", function () {
-                console.log("La lectura del mensaje #" + seqno + "a finalizado");
+                console.log('[#' + seqno + ']' + message.mail.finishRead);
             });
         }
     })
