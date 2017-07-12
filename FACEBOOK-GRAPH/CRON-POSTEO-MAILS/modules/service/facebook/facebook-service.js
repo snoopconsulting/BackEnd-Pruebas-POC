@@ -51,7 +51,7 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
         } else {
             var promises = [];
 
-            promises.push(facebookRepository.postPlainTextAndLink(groupId, data, ''));
+            promises.push(facebookRepository.postPlainTextAndLink(groupId, data, null));
 
             for (let attachment of attachments) {
 
@@ -70,7 +70,7 @@ function postInWorkSpaceAttachmentForGoogle(groupId, data, attachments) {
                         if (JSON.parse(result).hasOwnProperty('error')) arrayError.push(result)
                         else arrayResult.push(result)
                     }
-                    for(let err of arrayError) logService.insertLog(err)
+                    for (let err of arrayError) logService.insertLog(err)
                     resolve(arrayResult, arrayError)
                 })
         }
@@ -122,3 +122,4 @@ module.exports = {
     postInWorkPlace,
     postInWorkSpaceAttachmentForGoogle
 };
+
