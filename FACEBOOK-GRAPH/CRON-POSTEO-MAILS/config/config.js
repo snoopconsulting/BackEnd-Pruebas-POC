@@ -52,5 +52,14 @@ module.exports = {
                 one: '0 0 */1 * * *'
             }
         }
+    },
+    imap:{
+        snoopPruebas: {
+            user: 'maxilopez2223@gmail.com',
+            password: '123456asd',
+            host: 'imap.gmail.com',
+            port: 993,
+            tls: true
+        }
     }
 };
