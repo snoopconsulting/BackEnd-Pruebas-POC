@@ -59,3 +59,8 @@ Se podran mandar todo tipo de correo, dependiendo el caso, la aplicacion respond
 
 - Texto y varios imagenes y/o archivos: se posteara por separado el texto plano, las imagenes y los archivos.
 
+## Errores en tiempo de ejecucion
+
+Se automatizo la recepcion de errores de la aplicacion, cada vez que emita un error, se guardara dentro de la carpeta logs en un archivo del dia especifico que de produjo.
+Dentro de cada logs se guardara el error ordenado por fecha.
+Cada cierto tiempo configurable, un cron eliminara los logs antiguos para optimizar espacio fisico.
