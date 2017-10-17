@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Publicador de AlaMaula</title>
+        <script type="text/javascript">
+         function foo() {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'http://localhost:3000');
+             xhr.send();
+             alert('Publicación enviada!. En pocos minutos será visible');
+         }
+        </script>
+        <style>
+         #input_container { 
+             position:relative;
+             padding:0;
+             margin:0;
+         }
+         #input { 
+             height:20px;
+             margin:0;
+             padding-left:30px;
+         }
+         #input_img {
+         }
+        </style>
+        <!-- <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script> -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <style type="text/css">
+         header, section, footer, aside, nav, article, figure, audio, video, canvas  { display:block; }
+        </style>
+    </head>
+    <body>
+        <form onSubmit="foo()">
+            <div id="input_container">
+                <p><strong>Marca: </strong>Chevrolet</p>
+                <p><strong>Modelo: </strong>Agile</p>
+                <p><strong>Año: </strong>2007</p>
+                <p><strong>Kilometraje: </strong>20000</p>
+                <p><strong>Comentario: </strong>Auto en muy buen estado!</p>
+                <p><strong>Precio: </strong>250000</p>
+                <input type="submit" value="Publicar en AlaMaula">
+                <!-- <img src="./logo.png" id="input_img"> -->
+            </div>
+        </form>
+    </body>
+</html>
