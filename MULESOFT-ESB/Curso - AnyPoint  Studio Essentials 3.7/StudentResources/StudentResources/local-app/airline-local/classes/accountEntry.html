@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+	<head>
+		<title>
+			Account Entry Form
+		</title>
+  <style>
+  @import url(http://fonts.googleapis.com/css?family=Roboto:400,300);
+
+    body {  
+    width: 100%;
+    background-color: #fff;
+    font-weight: 300;
+    font-family: 'Roboto', sans-serif;
+    }
+    h1 {
+      font-size: 1.2em;
+      font-weight: 300;
+      font-style: normal;
+      margin-top: 0px;
+    }
+    .container {
+      width: 310px;
+      margin: 0 auto;
+      padding: 10px;
+      -webkit-border-radius: 5px; 
+      -moz-border-radius: 5px; 
+      background-color: #eee;
+      border-color: #ccc;
+      border: 1px solid #ccc;
+      padding-bottom: 70px;
+    }
+    .textbox { 
+      -webkit-border-radius: 5px; 
+      -moz-border-radius: 5px; 
+      border-radius: 5px; 
+      border: 1px solid #ccc; 
+      outline:0; 
+      height:2.5em; 
+      width: 300px; 
+      font-size: .7em;
+      font-weight: 300;
+    } 
+
+  button {
+  background-color: #999;
+  width: 10em;
+  height: 2.5em;
+  border: 1px solid #eee;
+  font-weight: 300;
+  font-family: 'Roboto', sans-serif;
+  font-size: .8em;
+  color: #fff;
+  -webkit-border-radius: 5px; 
+  -moz-border-radius: 5px; 
+  margin-top: 20px;
+  float: right;
+}
+
+button:active {
+  background-color: #777;
+  color: #fff;
+  border: none;
+}
+
+ </style>
+	</head>
+	<body>
+    <div class="container">
+    <form name="addAccount" method="POST">
+      <h1>Create New Account Records</h1>
+      Name:<br> <input name="name" class="textbox"><br><br>
+      Street<br> <input name="street" class="textbox"><br><br>
+      City:<br> <input name="city" class="textbox"><br><br>
+      State:<br> <input name="state" class="textbox"><br><br>
+      Postal:<br> <input name="postal" class="textbox"><br><br>
+      Country:<br> <input name="country" class="textbox">
+      <button type="Submit">Create Record</button>
+    </form>
+    </div>
+	</body>
+</html>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://training.mulesoft.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="TicketServiceService" targetNamespace="http://training.mulesoft.com/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://training.mulesoft.com/" elementFormDefault="unqualified" targetNamespace="http://training.mulesoft.com/" version="1.0">
+<xs:element name="findFlight" type="tns:findFlight"/>
+<xs:element name="findFlightResponse" type="tns:findFlightResponse"/>
+<xs:complexType name="findFlight">
+<xs:sequence>
+<xs:element minOccurs="0" name="arg0" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="findFlightResponse">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:flight"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="flight">
+<xs:sequence>
+<xs:element minOccurs="0" name="airlineName" type="xs:string"/>
+<xs:element minOccurs="0" name="code" type="xs:string"/>
+<xs:element minOccurs="0" name="departureDate" type="xs:string"/>
+<xs:element minOccurs="0" name="destination" type="xs:string"/>
+<xs:element name="emptySeats" type="xs:int"/>
+<xs:element minOccurs="0" name="origin" type="xs:string"/>
+<xs:element minOccurs="0" name="planeType" type="xs:string"/>
+<xs:element name="price" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="arrayList">
+<xs:complexContent>
+<xs:extension base="tns:abstractList">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType abstract="true" name="abstractList">
+<xs:complexContent>
+<xs:extension base="tns:abstractCollection">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType abstract="true" name="abstractCollection">
+<xs:sequence/>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="findFlightResponse">
+    <wsdl:part element="tns:findFlightResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findFlight">
+    <wsdl:part element="tns:findFlight" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="TicketService">
+    <wsdl:operation name="findFlight">
+      <wsdl:input message="tns:findFlight" name="findFlight">
+    </wsdl:input>
+      <wsdl:output message="tns:findFlightResponse" name="findFlightResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TicketServiceServiceSoapBinding" type="tns:TicketService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="findFlight">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findFlight">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findFlightResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TicketServiceService">
+    <wsdl:port binding="tns:TicketServiceServiceSoapBinding" name="TicketServicePort">
+      <soap:address location="http://localhost:8887/delta"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

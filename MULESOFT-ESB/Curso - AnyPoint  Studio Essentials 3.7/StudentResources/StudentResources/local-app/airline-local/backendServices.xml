@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+	xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	
+	<spring:beans>
+        <spring:bean id="AccountDB" name="AccountDB" class="com.mulesoft.training.DBInitialization" scope="singleton"/>
+    </spring:beans>
+	
+	<db:generic-config name="AccountDBConfig" url="jdbc:derby:memory:muleEmbeddedDB;create=true" driverClassName="org.apache.derby.jdbc.AutoloadedDriver" doc:name="Generic Database Configuration"/>
+	
+    <flow name="DeltaAirlineSoapService" doc:name="DeltaAirlineSoapService">
+		<http:inbound-endpoint host="localhost" port="8887" path="delta" exchange-pattern="request-response" doc:name="HTTP"/>
+        <cxf:jaxws-service doc:name="SOAP" serviceClass="com.mulesoft.training.TicketService"/>
+        <component class="com.mulesoft.training.Ticket" doc:name="Ticket Component">
+            <timer-interceptor/>
+        </component>
+	</flow>
+    <flow name="UnitedWebService" doc:name="UnitedWebService">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8887" doc:name="HTTP" path="united"/>
+        <jersey:resources doc:name="REST">
+            <component class="com.mulesoft.training.rest.Ticket"/>
+        </jersey:resources>
+    </flow>
+    
+        <flow name="derbytestFlow1" doc:name="derbytestFlow1">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8887" path="db" doc:name="HTTP"/>
+        <db:select config-ref="AccountDBConfig" doc:name="Database">
+            <db:dynamic-query><![CDATA[SELECT *
+FROM currentFlights]]></db:dynamic-query>
+        </db:select>
+        <object-to-string-transformer doc:name="Object to String"/>
+    </flow>
+	
+		<flow name="AccountDatabaseFlow" doc:name="AccountDatabaseFlow">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="8887" doc:name="HTTP" path="account"/>
+		<choice doc:name="Choice">
+			<when expression="#[message.inboundProperties['http.method'] == 'GET']">
+			<parse-template
+				location="accountEntry.html"
+				doc:name="Parse Template" />
+			<set-property propertyName="Content-Type" value="text/html"
+				doc:name="Property" />
+			</when>
+			<otherwise>
+                <http:body-to-parameter-map-transformer doc:name="Body to Parameter Map"/>				
+				<db:insert config-ref="AccountDBConfig" doc:name="Database">
+                    <db:dynamic-query><![CDATA[INSERT INTO Account (name, street, city, country, state, postal) 
+VALUES ('#[payload['name']]','#[payload['street']]','#[payload['city']]','#[payload['country']]','#[payload['state']]','#[payload['postal']]')]]></db:dynamic-query>
+				</db:insert>
+				<db:select config-ref="AccountDBConfig" doc:name="Database">
+					<db:dynamic-query>	
+						<![CDATA[SELECT * FROM Account]]>
+					</db:dynamic-query>
+				</db:select>
+                <logger message="#['\n\n'] ========= BEGIN LOGGER ========= #['\n\n']  Payload as String: #[payload.toString()] #['\n\n']  Class: #[payload.getClass()] #['\n\n'] Class2: #[payload[0].getClass()] #['\n\n'] ========= END LOGGER ========= #['\n\n'] " level="INFO" doc:name="Logger"/>
+                <component class="com.mulesoft.training.CreateResponse" doc:name="Java"/>
+                <object-to-string-transformer doc:name="Object to String"/>
+                <set-property propertyName="Content-Type" value="text/html" doc:name="Property"/>
+			</otherwise>
+		</choice>
+	</flow>
+
+</mule>
