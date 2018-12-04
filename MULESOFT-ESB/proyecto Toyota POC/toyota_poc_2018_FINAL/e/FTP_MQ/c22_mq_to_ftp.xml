@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers" xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:mulerequester="http://www.mulesoft.org/schema/mule/mulerequester" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mulerequester http://www.mulesoft.org/schema/mule/mulerequester/current/mule-mulerequester.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd
+http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+    <flow name="C22_Sync">
+        <vm:inbound-endpoint exchange-pattern="one-way" path="c21.queue.sync" doc:name="Queue Listener"/>
+        <flow-ref name="C22_Transform_and_WriteFTP_Subflow" doc:name="Flow Reference"/>
+        <!-- <ftp:outbound-endpoint host="localhost" port="21" passive="true" responseTimeout="10000" doc:name="FTP (Falta configurar)"/> -->
+    </flow>
+    <flow name="C22_Async">
+        <poll doc:name="Poll">
+            <schedulers:cron-scheduler expression="0 0/36 * 1/1 * ? *"/>
+            <mulerequester:request-collection resource="vm://c21.queue.async" doc:name="Mule Requester"/>
+        </poll>
+        <dw:transform-message doc:name="Get Final Array">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+flatten payload]]></dw:set-payload>
+        </dw:transform-message>
+        <flow-ref name="C22_Transform_and_WriteFTP_Subflow" doc:name="Flow Reference"/>
+      <!--   <ftp:outbound-endpoint host="localhost" port="21" passive="true" responseTimeout="10000" doc:name="FTP (Falta configurar)"/> -->
+    </flow>
+    <sub-flow name="C22_Transform_and_WriteFTP_Subflow">
+        <dw:transform-message doc:name="JAVA to CSV" metadata:id="fbce3138-250b-44b2-8ba2-dcd5494ece2a">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/csv
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	client_id: payload01.client_id,
+	client_name: payload01.client_name,
+	client_country: payload01.client_country
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <ftp:outbound-endpoint host="${ftp.host}" port="21" path="${ftp.path.c22}#['flights_' + server.dateTime.format(&quot;yyyy_MM_dd_HH:mm:ss&quot;)]" user="${ftp.user}" password="${ftp.password}" passive="true" responseTimeout="10000" doc:name="FTP"/>
+    </sub-flow>
+</mule>

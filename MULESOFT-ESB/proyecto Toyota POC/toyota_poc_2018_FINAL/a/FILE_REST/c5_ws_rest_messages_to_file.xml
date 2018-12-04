@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:mulerequester="http://www.mulesoft.org/schema/mule/mulerequester" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd
+http://www.mulesoft.org/schema/mule/mulerequester http://www.mulesoft.org/schema/mule/mulerequester/current/mule-mulerequester.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd">
+    <flow name="C5_Sync">
+        <http:listener config-ref="ToyotaPOC_Listener" path="/C5" allowedMethods="GET" doc:name="Trigger Execution"/>
+        <http:request config-ref="Flights_WS_REST" path="/essentials/united/flights" method="GET" doc:name="Invoke REST Service"/>
+        <dw:transform-message doc:name="Transform to Java Array" metadata:id="646f1686-70eb-4fbe-8340-7d1c3e9b59bb">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.flights]]></dw:set-payload>
+        </dw:transform-message>
+        <vm:outbound-endpoint exchange-pattern="one-way"  doc:name="Save Message in Queue" path="c5.queue"/>
+    </flow>
+    <flow name="C5_Async">
+        <poll doc:name="Poll">
+            <schedulers:cron-scheduler expression="0 0/19 * 1/1 * ? *"/>
+            <mulerequester:request-collection resource="vm://c5.queue" doc:name="Get all queued messages"/>
+        </poll>
+        <dw:transform-message doc:name="Prepare Final Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+flatten payload]]></dw:set-payload>
+        </dw:transform-message>
+        <dw:transform-message doc:name="Transform to CSV" metadata:id="602b5003-26c7-481d-90fd-9527ab47b4cf">
+            <dw:input-payload/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/csv
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	code: payload01.code,
+	price: payload01.price as :string,	
+	origin: payload01.origin,
+	destination: payload01.destination,
+	departureDate: payload01.departureDate,
+	airlineName: payload01.airlineName,
+	planeType: payload01.planeType,
+	emptySeats: payload01.emptySeats as :string
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <file:outbound-endpoint path="${outputFolder}/c5/" outputPattern="${c2.filename}_#[server.dateTime.format('yyyy-MM-dd')].csv" responseTimeout="10000" doc:name="Write CSV File"/>
+    </flow>
+</mule>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:smtps="http://www.mulesoft.org/schema/mule/smtps" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/smtps http://www.mulesoft.org/schema/mule/smtps/current/mule-smtps.xsd">
+    <sub-flow name="P01_SingleInMailAlert-AbstractFlow">
+        <db:select config-ref="SQL_Server_Database" doc:name="Read DB">
+            <db:dynamic-query><![CDATA[#[flowVars.query]]]></db:dynamic-query>
+        </db:select>
+        <foreach collection="#[payload]" doc:name="For Each Record">
+            <vm:outbound-endpoint exchange-pattern="one-way" path="#[flowVars.queue]" doc:name="Save Message in Mail Queue"/>
+        </foreach>
+    </sub-flow>
+    <flow name="P01-SendEmail">
+        <set-payload value="#[flowVars.body]" doc:name="Set Message"/>
+        <smtps:outbound-endpoint host="${smtp.host}" responseTimeout="10000" doc:name="Send Alert Mail" from="${smtp.from}" password="${smtp.password}" port="${smtp.port}" subject="${smtp.subject}" to="#[flowVars.mailTo]" user="${smtp.user}"/>
+        <catch-exception-strategy doc:name="Error Sending Mail">
+            <set-payload doc:name="Set Message" value="#[flowVars.body]"/>
+            <vm:outbound-endpoint exchange-pattern="one-way"  doc:name="Save Message in Error Queue" path="#[flowVars.'error.queue']"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

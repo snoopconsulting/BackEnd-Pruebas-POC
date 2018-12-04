@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd">
+
+ <flow name="workflow-b-mainFlow">
+        <poll doc:name="Poll">
+            <schedulers:cron-scheduler expression="0 0/42 * 1/1 * ? *"/>
+            <logger level="INFO" doc:name="Log Start Processing" message="Workflow B started"/>
+        </poll>
+        <set-variable doc:name="Set DB Query" value="#['SELECT * FROM logins']" variableName="query"/>
+        <set-variable doc:name="Set MQ" value="logins.queue" variableName="queue"/>
+        <flow-ref name="P01_SingleInMailAlert-AbstractFlow" doc:name="Trigger Execution Ref"/>
+    </flow>
+    <flow name="workflow-b-queueFlow">
+        <vm:inbound-endpoint exchange-pattern="one-way" path="logins.queue" doc:name="Get Queued Message"/>
+        <set-variable variableName="mailTo" value="${smtp.to}" doc:name="Set Mail Receiver"/>
+        <set-variable variableName="error.queue" value="logins.error.queue" doc:name="Set Error MQ"/>
+        <set-variable variableName="body" value="#['Alerta: El estado del proceso en la tabla de logins, para el registro ' + payload.ID + ' tuvo el siguiente resultado: ' + payload.status]" doc:name="Set Email Body"/>
+        <flow-ref name="P01-SendEmail" doc:name="Send Mail Ref"/>
+    </flow>
+    
+</mule>

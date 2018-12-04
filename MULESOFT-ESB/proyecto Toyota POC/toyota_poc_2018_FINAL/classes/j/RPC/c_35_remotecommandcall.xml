@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	
+	
+	<spring:beans>
+		<spring:bean class="ComandCall.CallExample" name="invokeSpringBean">
+		</spring:bean>
+	</spring:beans>
+    <flow name="C35_Sync">
+        <poll doc:name="Polling">
+            <fixed-frequency-scheduler frequency="5" timeUnit="SECONDS"/>
+            <logger message="#['\n===\nCalling Command...\n===']" level="INFO" doc:name="Log Execution"/>
+        </poll>
+        <invoke object-ref="invokeSpringBean" method="methodA" doc:name="Invoke JAVA Method"/>
+    </flow>
+
+	<flow name="C35_Async">
+        <poll doc:name="Cron">
+            <schedulers:cron-scheduler expression="0 0/59 * 1/1 * ? *"/>
+            <logger message="#['\n===\nCalling Command...\n===']" level="INFO" doc:name="Log Execution"/>
+        </poll>
+		<invoke object-ref="invokeSpringBean" method="methodA" doc:name="Invoke JAVA Method"/>
+	</flow>
+</mule>

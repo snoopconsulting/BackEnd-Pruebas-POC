@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    
+    <flow name="C2_Sync">
+        <http:listener config-ref="ToyotaPOC_Listener" path="/C2" allowedMethods="GET" doc:name="Trigger Execution"/>
+        <http:request config-ref="Flights_WS_REST" path="/essentials/united/flights" method="GET" doc:name="Invoke REST Service"/>
+       
+        <dw:transform-message doc:name="Transform to CSV" metadata:id="4b76e006-e70c-4238-869b-9e583a9d6b2e">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/csv
+---
+payload.flights map ((flight , indexOfFlight) -> {
+	code: flight.code,
+	price: flight.price as :string,
+	origin: flight.origin,
+	destination: flight.destination,
+	departureDate: flight.departureDate,
+	airlineName: flight.airlineName,
+	planeType: flight.planeType,
+	emptySeats: flight.emptySeats as :string
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <file:outbound-endpoint path="${outputFolder}/c2/" outputPattern="${c2.filename}#[server.dateTime.format('yyyy-MM-dd')].csv" responseTimeout="10000" doc:name="Write CSV File"/>
+    </flow>
+    <flow name="C2_Async">
+        <poll doc:name="Poll">
+            <schedulers:cron-scheduler expression="0 0/16 * 1/1 * ? *"/>
+            <http:request config-ref="Flights_WS_REST" path="/essentials/united/flights" method="GET" doc:name="Invoke REST Service"/>
+        </poll>
+        <dw:transform-message doc:name="Transform to CSV" metadata:id="3061aa0d-cf8c-4b77-8003-6c3ee4ac8727">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/csv
+---
+payload.flights map ((flight , indexOfFlight) -> {
+	code: flight.code,
+	price: flight.price as :string,
+	origin: flight.origin,
+	destination: flight.destination,
+	departureDate: flight.departureDate,
+	airlineName: flight.airlineName,
+	planeType: flight.planeType,
+	emptySeats: flight.emptySeats as :string
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <file:outbound-endpoint path="${outputFolder}/c2/" outputPattern="${c2.filename}#[server.dateTime.format('yyyy-MM-dd')].csv" responseTimeout="10000" doc:name="Write CSV File"/>
+    </flow>
+</mule>

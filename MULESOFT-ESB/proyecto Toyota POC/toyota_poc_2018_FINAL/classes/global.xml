@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:pop3="http://www.mulesoft.org/schema/mule/pop3"
+	xmlns:pop3s="http://www.mulesoft.org/schema/mule/pop3s" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/pop3s http://www.mulesoft.org/schema/mule/pop3s/current/mule-pop3s.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+	<file:connector name="file-connector-config" autoDelete="false" streaming="true" validateConnections="true" doc:name="File" />
+	<http:listener-config name="ToyotaPOC_Listener"
+		host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
+	<context:property-placeholder location="toyota-PROD.properties" />
+	<db:mysql-config name="MySQL_Database" host="${mysql.host}"
+		port="${mysql.port}" user="${mysql.user}" password="${mysql.password}"
+		database="${mysql.database}" doc:name="MySQL Configuration" />
+    <http:request-config name="ToyotaPOC_REST_WS" host="${http.rest.host}" port="80" doc:name="HTTP Request Configuration"/>
+    
+    <http:request-config name="Flights_WS_REST" host="mu.mulesoft-training.com" port="80" doc:name="HTTP Request Configuration"/>
+    <ws:consumer-config name="DeltaFlights_WSDL" wsdlLocation="http://mu.mulesoft-training.com/essentials/delta?wsdl" service="TicketServiceService" port="TicketServicePort" serviceAddress="http://mu.mulesoft-training.com/essentials/delta" doc:name="Web Service Consumer"/>
+    <db:generic-config name="SQL_Server_Database" url="jdbc:sqlserver://${sqlserver.host}:${sqlserver.port};databaseName=${sqlserver.database};user=${sqlserver.user};password=${sqlserver.password}" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" doc:name="Generic Database Configuration"/>
+	<pop3s:connector name="POP3" validateConnections="true" deleteReadMessages="false" doc:name="POP3">
+        <pop3s:tls-client path="*" storePassword="*"/>
+        <pop3s:tls-trust-store path="*" storePassword="*"/>
+    </pop3s:connector>
+    <db:oracle-config name="Oracle_Configuration" host="${oracle.host}" port="${oracle.port}" instance="${oracle.instance}" user="${oracle.user}" password="${oracle.password}" doc:name="Oracle Configuration"/>
+	
+   
+</mule>
